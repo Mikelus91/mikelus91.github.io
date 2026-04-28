@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Miguel Hernández · Mobile Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & variables ──────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --bg2:       #161b22;
+      --bg3:       #1c2333;
+      --accent:    #2563eb;
+      --accent2:   #38bdf8;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --border:    rgba(255,255,255,0.07);
+      --mono:      'Space Mono', monospace;
+      --sans:      'DM Sans', sans-serif;
+      --radius:    8px;
+      --glow:      0 0 40px rgba(37,99,235,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    ::selection { background: var(--accent); color: #fff; }
+
+    /* ── Scrollbar ──────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* ── Noise overlay ──────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 999; opacity: 0.4;
+    }
+
+    /* ── Nav ────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: rgba(13,17,23,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--accent2);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+    .nav-logo span { color: var(--muted); }
+
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── Hero ───────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 860px; margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent2);
+      background: rgba(56,189,248,0.08);
+      border: 1px solid rgba(56,189,248,0.2);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    h1 {
+      font-family: var(--mono);
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    h1 .accent { color: var(--accent2); }
+    h1 .dim    { color: var(--muted); font-weight: 400; }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 540px;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-btns {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: var(--radius);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: var(--glow); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent2); transform: translateY(-1px); }
+
+    .hero-stack {
+      margin-top: 4rem;
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .stack-label {
+      font-family: var(--mono); font-size: 0.7rem;
+      color: var(--muted); letter-spacing: 0.1em;
+    }
+    .stack-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .pill {
+      font-family: var(--mono); font-size: 0.68rem;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--accent2); padding: 0.25rem 0.65rem;
+      border-radius: 20px; letter-spacing: 0.05em;
+    }
+
+    /* ── Sections ───────────────────────────────────────────── */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    .section-label {
+      font-family: var(--mono); font-size: 0.7rem;
+      color: var(--accent); letter-spacing: 0.15em;
+      text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-family: var(--mono);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      margin-bottom: 2.5rem;
+      line-height: 1.2;
+    }
+
+    .divider {
+      width: 40px; height: 2px;
+      background: var(--accent);
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── About ──────────────────────────────────────────────── */
+    #about { background: var(--bg2); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      color: var(--muted);
+      margin-bottom: 1rem;
+      font-weight: 300;
+      font-size: 1rem;
+    }
+    .about-text p strong { color: var(--text); font-weight: 500; }
+
+    .about-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+    .about-card h3 {
+      font-family: var(--mono); font-size: 0.75rem;
+      color: var(--accent2); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .skill-row {
+      display: flex; justify-content: space-between;
+      align-items: center; padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .skill-row:last-child { border-bottom: none; }
+    .skill-name { font-family: var(--mono); font-size: 0.78rem; }
+    .skill-bar {
+      width: 100px; height: 4px;
+      background: var(--bg2); border-radius: 2px;
+      overflow: hidden;
+    }
+    .skill-fill {
+      height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      animation: barGrow 1s ease both;
+      transform-origin: left;
+    }
+
+    .contact-info { margin-top: 1.5rem; }
+    .contact-row {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.4rem 0;
+      font-family: var(--mono); font-size: 0.78rem; color: var(--muted);
+    }
+    .contact-row a { color: var(--accent2); text-decoration: none; }
+    .contact-row a:hover { text-decoration: underline; }
+    .contact-row .ico { color: var(--accent); font-size: 0.85rem; }
+
+    /* ── Blog ───────────────────────────────────────────────── */
+    #blog { background: var(--bg); }
+
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .post-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-decoration: none;
+      color: var(--text);
+      display: flex; flex-direction: column;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .post-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: var(--glow);
+    }
+    .post-tag {
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--accent2); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 0.6rem;
+    }
+    .post-title {
+      font-family: var(--mono); font-size: 0.95rem;
+      font-weight: 700; line-height: 1.3;
+      margin-bottom: 0.6rem;
+    }
+    .post-excerpt {
+      font-size: 0.85rem; color: var(--muted);
+      flex: 1; line-height: 1.6; font-weight: 300;
+    }
+    .post-date {
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--muted); margin-top: 1rem;
+    }
+    .post-card.featured {
+      grid-column: span 2;
+      border-color: rgba(37,99,235,0.3);
+      background: linear-gradient(135deg, var(--bg2), var(--bg3));
+    }
+
+    /* ── Portfolio ──────────────────────────────────────────── */
+    #portfolio { background: var(--bg2); }
+
+    .repo-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .repo-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+    .repo-info h3 {
+      font-family: var(--mono); font-size: 0.9rem;
+      color: var(--accent2); margin-bottom: 0.3rem;
+    }
+    .repo-info p { font-size: 0.85rem; color: var(--muted); font-weight: 300; }
+    .repo-meta {
+      display: flex; gap: 1rem; align-items: center;
+      font-family: var(--mono); font-size: 0.7rem; color: var(--muted);
+    }
+    .lang-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      display: inline-block; margin-right: 4px;
+    }
+    .status-badge {
+      font-family: var(--mono); font-size: 0.65rem;
+      padding: 0.2rem 0.6rem; border-radius: 20px;
+      letter-spacing: 0.06em;
+    }
+    .status-beta { background: rgba(56,189,248,0.1); color: var(--accent2); border: 1px solid rgba(56,189,248,0.2); }
+    .status-wip  { background: rgba(250,204,21,0.1); color: #facc15; border: 1px solid rgba(250,204,21,0.2); }
+    .status-done { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+
+    .github-cta {
+      margin-top: 2rem; text-align: center;
+    }
+
+    /* ── TrueCore Dev ───────────────────────────────────────── */
+    #truecore { background: var(--bg); position: relative; overflow: hidden; }
+    #truecore::before {
+      content: 'TRUECORE';
+      position: absolute; right: -2rem; top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--mono); font-size: 10rem; font-weight: 700;
+      color: rgba(37,99,235,0.04); pointer-events: none;
+      white-space: nowrap; letter-spacing: -0.05em;
+    }
+
+    .truecore-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    }
+
+    .tc-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+    }
+    .tc-card h3 {
+      font-family: var(--mono); font-size: 0.8rem;
+      color: var(--accent2); margin-bottom: 0.8rem;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .tc-card p { font-size: 0.9rem; color: var(--muted); font-weight: 300; line-height: 1.6; }
+
+    .tc-values {
+      grid-column: span 2;
+      background: var(--bg2); border: 1px solid rgba(37,99,235,0.3);
+      border-radius: var(--radius); padding: 1.5rem;
+    }
+    .values-list {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+    .value-tag {
+      font-family: var(--mono); font-size: 0.72rem;
+      background: rgba(37,99,235,0.08);
+      border: 1px solid rgba(37,99,235,0.2);
+      color: var(--accent2); padding: 0.3rem 0.8rem;
+      border-radius: 20px; letter-spacing: 0.05em;
+    }
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+    }
+    footer p {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--muted); letter-spacing: 0.05em;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+
+    /* ── Animations ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes barGrow {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1; transform: translateY(0);
+    }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 680px) {
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      .nav-links a { font-size: 0.65rem; }
+      section { padding: 3.5rem 1rem; }
+      .about-grid  { grid-template-columns: 1fr; }
+      .truecore-grid { grid-template-columns: 1fr; }
+      .tc-values { grid-column: span 1; }
+      .post-card.featured { grid-column: span 1; }
+      .repo-card { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      h1 { font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#hero">mhmy<span>.dev</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">Sobre mí</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#portfolio">Portfolio</a></li>
+      <li><a href="#truecore">TrueCore</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-content container">
+      <div class="hero-tag">// Mobile Developer</div>
+      <h1>
+        Miguel<br>
+        <span class="accent">Hernández</span><br>
+        <span class="dim">Marín-Yaseli</span>
+      </h1>
+      <p class="hero-desc">
+        Desarrollador de aplicaciones móviles enfocado en Android y Flutter.
+        Creo software completo, honesto y pensado para durar.
+      </p>
+      <div class="hero-btns">
+        <a class="btn btn-primary" href="#portfolio">Ver proyectos</a>
+        <a class="btn btn-ghost" href="https://github.com/Mikelus91" target="_blank" rel="noopener">GitHub →</a>
+      </div>
+      <div class="hero-stack">
+        <span class="stack-label">stack //</span>
+        <div class="stack-pills">
+          <span class="pill">Kotlin</span>
+          <span class="pill">Dart</span>
+          <span class="pill">Flutter</span>
+          <span class="pill">Java</span>
+          <span class="pill">Python</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <p class="section-label">// 01 — sobre mí</p>
+      <h2>Quién soy</h2>
+      <div class="divider"></div>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p>
+            Soy estudiante de <strong>Desarrollo de Aplicaciones Multiplataforma</strong>
+            con especial interés en el ecosistema móvil Android y en el desarrollo
+            multiplataforma con Flutter/Dart.
+          </p>
+          <p>
+            Mi filosofía de desarrollo se basa en crear <strong>software completo y honesto</strong>:
+            productos funcionales desde el primer día, sin dependencias innecesarias de
+            servicios externos y pensados para durar en el tiempo.
+          </p>
+          <p>
+            Además del código, me interesa el lado ético y cultural del software:
+            la preservación de las aplicaciones, el respeto al usuario y la sostenibilidad
+            de los modelos de negocio digitales.
+          </p>
+          <div class="contact-info">
+            <div class="contact-row">
+              <span class="ico">✉</span>
+              <a href="mailto:contacto@mikelus91.github.io">contacto@mikelus91.github.io</a>
+            </div>
+            <div class="contact-row">
+              <span class="ico">⌂</span>
+              <span>Zaragoza, España</span>
+            </div>
+            <div class="contact-row">
+              <span class="ico">◈</span>
+              <a href="https://github.com/Mikelus91" target="_blank" rel="noopener">github.com/Mikelus91</a>
+            </div>
+          </div>
+        </div>
+        <div class="reveal">
+          <div class="about-card">
+            <h3>Competencias técnicas</h3>
+            <div class="skill-row">
+              <span class="skill-name">Dart / Flutter</span>
+              <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
+            </div>
+            <div class="skill-row">
+              <span class="skill-name">Kotlin / Android</span>
+              <div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div>
+            </div>
+            <div class="skill-row">
+              <span class="skill-name">Java</span>
+              <div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div>
+            </div>
+            <div class="skill-row">
+              <span class="skill-name">Python</span>
+              <div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div>
+            </div>
+            <div class="skill-row">
+              <span class="skill-name">Git / GitHub</span>
+              <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG -->
+  <section id="blog">
+    <div class="container">
+      <p class="section-label">// 02 — blog técnico</p>
+      <h2>Últimas entradas</h2>
+      <div class="divider"></div>
+      <div class="blog-grid">
+
+        <div class="post-card featured reveal">
+          <span class="post-tag">Flutter · Arquitectura</span>
+          <div class="post-title">Por qué elegí Flutter para mi primer proyecto serio</div>
+          <p class="post-excerpt">
+            Cuando empecé a pensar en desarrollar una app multiplataforma, la pregunta
+            era inevitable: React Native, Flutter o nativo. En esta entrada explico
+            el proceso de decisión, las pruebas que hice y por qué Flutter acabó
+            ganando para mi caso concreto.
+          </p>
+          <div class="post-date">Abril 2026</div>
+        </div>
+
+        <div class="post-card reveal">
+          <span class="post-tag">Kotlin · Android</span>
+          <div class="post-title">Corrutinas en Kotlin: lo que nadie te explica al principio</div>
+          <p class="post-excerpt">
+            Las corrutinas parecen magia hasta que entiendes qué hay detrás. Una
+            introducción honesta a la programación asíncrona en Android.
+          </p>
+          <div class="post-date">Abril 2026</div>
+        </div>
+
+        <div class="post-card reveal">
+          <span class="post-tag">Industria · Opinión</span>
+          <div class="post-title">Software honesto: por qué importa más de lo que parece</div>
+          <p class="post-excerpt">
+            Reflexión sobre los modelos freemium, las microtransacciones y por qué
+            creo que el software completo es también un modelo viable.
+          </p>
+          <div class="post-date">Marzo 2026</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio">
+    <div class="container">
+      <p class="section-label">// 03 — repositorio</p>
+      <h2>Portfolio de código</h2>
+      <div class="divider"></div>
+
+      <p style="color:var(--muted);margin-bottom:2rem;font-weight:300;font-size:0.95rem;">
+        Proyectos y ejercicios organizados por lenguaje y complejidad.
+        Disponibles en <a href="https://github.com/Mikelus91" target="_blank"
+        rel="noopener" style="color:var(--accent2);">github.com/Mikelus91</a>.
+      </p>
+
+      <div class="repo-card reveal">
+        <div class="repo-info">
+          <h3>app-flutter-beta</h3>
+          <p>Aplicación multiplataforma funcional — modo offline completo, interfaz pulida.</p>
+          <div style="margin-top:0.6rem">
+            <span class="lang-dot" style="background:#54c5f8"></span>
+            <span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted)">Dart / Flutter</span>
+          </div>
+        </div>
+        <span class="status-badge status-beta">Beta</span>
+      </div>
+
+      <div class="repo-card reveal">
+        <div class="repo-info">
+          <h3>kotlin-android-projects</h3>
+          <p>Colección de apps Android nativas con arquitectura MVVM. Fundamentos y proyectos.</p>
+          <div style="margin-top:0.6rem">
+            <span class="lang-dot" style="background:#7f52ff"></span>
+            <span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted)">Kotlin</span>
+          </div>
+        </div>
+        <span class="status-badge status-wip">En desarrollo</span>
+      </div>
+
+      <div class="repo-card reveal">
+        <div class="repo-info">
+          <h3>java-fundamentals</h3>
+          <p>POO, estructuras de datos, patrones de diseño e interfaces gráficas con JavaFX.</p>
+          <div style="margin-top:0.6rem">
+            <span class="lang-dot" style="background:#b07219"></span>
+            <span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted)">Java</span>
+          </div>
+        </div>
+        <span class="status-badge status-done">Completado</span>
+      </div>
+
+      <div class="repo-card reveal">
+        <div class="repo-info">
+          <h3>python-scripts</h3>
+          <p>Scripts de automatización, herramientas de productividad y proyectos con interfaz.</p>
+          <div style="margin-top:0.6rem">
+            <span class="lang-dot" style="background:#3572a5"></span>
+            <span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted)">Python</span>
+          </div>
+        </div>
+        <span class="status-badge status-done">Completado</span>
+      </div>
+
+      <div class="github-cta reveal">
+        <a class="btn btn-primary" href="https://github.com/Mikelus91" target="_blank" rel="noopener">
+          Ver repositorio completo en GitHub →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUECORE DEV -->
+  <section id="truecore">
+    <div class="container">
+      <p class="section-label">// 04 — proyecto</p>
+      <h2>TrueCore Dev</h2>
+      <div class="divider"></div>
+
+      <div class="truecore-grid">
+        <div class="tc-card reveal">
+          <h3>Qué es</h3>
+          <p>
+            TrueCore Dev es un proyecto de startup enfocado en el desarrollo de
+            aplicaciones móviles y videojuegos premium bajo una filosofía de
+            producto completo y honesto.
+          </p>
+        </div>
+        <div class="tc-card reveal">
+          <h3>Qué nos diferencia</h3>
+          <p>
+            Sin microtransacciones, sin funcionalidades esenciales bloqueadas por
+            suscripción. Si los servicios online cesan, liberamos el código para
+            que la comunidad pueda mantenerlo.
+          </p>
+        </div>
+        <div class="tc-values reveal">
+          <h3 style="font-family:var(--mono);font-size:0.8rem;color:var(--accent2);text-transform:uppercase;letter-spacing:0.08em;">
+            Valores
+          </h3>
+          <div class="values-list">
+            <span class="value-tag">Integridad</span>
+            <span class="value-tag">Respeto al usuario</span>
+            <span class="value-tag">Calidad sobre cantidad</span>
+            <span class="value-tag">Preservación cultural</span>
+            <span class="value-tag">Software offline-first</span>
+            <span class="value-tag">Transparencia</span>
+            <span class="value-tag">Sin crunch</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>
+      Miguel Hernández Marín-Yaseli &nbsp;·&nbsp;
+      <a href="https://github.com/Mikelus91" target="_blank" rel="noopener">github.com/Mikelus91</a>
+      &nbsp;·&nbsp; 2026
+    </p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const obs = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // Active nav link highlight
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 100) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current
+          ? 'var(--text)' : '';
+      });
+    });
+  </script>
+</body>
+</html>
